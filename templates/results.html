@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+    <title>Analysis Results</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <h1>Analysis of {{ url }}</h1>
+
+    <h2>Meta Information</h2>
+    <p><strong>Meta Description:</strong> {{ meta_desc }}</p>
+    <p><strong>Meta Keywords:</strong> {{ meta_keywords }}</p>
+
+    <h2>Top 10 Words</h2>
+    <ul>
+        {% for word, freq in common_words %}
+            <li>{{ word }} ({{ freq }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Word Frequency Chart</h2>
+    <img src="data:image/png;base64,{{ bar_chart_data }}" alt="Word Frequency Chart" style="max-width:100%; height:auto;"/>
+
+    <h2>Hyperlink Validation</h2>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Link Text</th>
+                <th>URL</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for text, url, status in link_statuses %}
+                <tr>
+                    <td>{{ text }}</td>
+                    <td><a href="{{ url }}" target="_blank">{{ url }}</a></td>
+                    <td>{{ status }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Link Graph</h2>
+    <img src="data:image/png;base64,{{ graph_img_data }}" alt="Link Graph" style="max-width:100%; height:auto;"/>
+
+    <h2>Download Reports</h2>
+
+    <!-- CSV Download -->
+    <form method="POST" action="/download_csv">
+        <input type="hidden" name="csv_data" value="{{ csv_data }}">
+        <button type="submit">Download CSV</button>
+    </form>
+
+    <!-- PDF Download -->
+    <form method="POST" action="/download_pdf">
+        <input type="hidden" name="url" value="{{ url }}">
+        <input type="hidden" name="meta_desc" value="{{ meta_desc }}">
+        <input type="hidden" name="meta_keywords" value="{{ meta_keywords }}">
+        <input type="hidden" name="words" value='{{ common_words | tojson }}'>
+        <input type="hidden" name="link_statuses" value='{{ link_statuses | tojson }}'>
+        <button type="submit">Download PDF</button>
+    </form>
+
+    <p><a href="/">Analyze Another URL</a></p>
+</body>
+</html>
